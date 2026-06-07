@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CalcButton" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:background">#ffffff</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="CalcButtonOp" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:background">#ff9800</item>
+        <item name="android:gravity">center</item>
+    </style>
+    <style name="CalcButtonEq" parent="Widget.AppCompat.Button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:background">#2196f3</item>
+        <item name="android:gravity">center</item>
+    </style>
+</resources>
