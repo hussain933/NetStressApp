@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         display = findViewById(R.id.editText);
 
-        // All button click listeners
+        // Digit buttons
         int[] digitIds = {R.id.btn_0,R.id.btn_1,R.id.btn_2,R.id.btn_3,R.id.btn_4,
                           R.id.btn_5,R.id.btn_6,R.id.btn_7,R.id.btn_8,R.id.btn_9};
         for (int id : digitIds) {
@@ -61,11 +61,11 @@ public class MainActivity extends AppCompatActivity {
     private void evaluate() {
         if (expression.length() == 0) return;
         try {
-            String expr = expression.toString();
-            double result = new ExpressionEvaluator().evaluate(expr);
-            display.setText(String.valueOf(result));
+            double result = evaluateExpression(expression.toString());
+            String resultStr = (result == (long) result) ? String.valueOf((long) result) : String.valueOf(result);
+            display.setText(resultStr);
             expression.setLength(0);
-            expression.append(result);
+            expression.append(resultStr);
             lastWasEq = true;
         } catch (Exception e) {
             display.setText("Error");
@@ -82,54 +82,63 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Simple expression evaluator (supports + - * /)
-    class ExpressionEvaluator {
-        double evaluate(String expr) {
-            // Remove spaces
-            expr = expr.replaceAll("\\s", "");
-            // Simple evaluator using operator precedence
-            // For simplicity, we use a basic implementation
-            return new Object() {
-                int pos = -1, ch;
-                void next() { ch = (++pos < expr.length()) ? expr.charAt(pos) : -1; }
-                double parse() {
-                    next();
-                    double x = parseTerm();
-                    while (ch == '+' || ch == '-') {
-                        char op = (char) ch;
-                        next();
-                        double y = parseTerm();
-                        if (op == '+') x += y;
-                        else x -= y;
-                    }
-                    return x;
-                }
-                double parseTerm() {
-                    double x = parseFactor();
-                    while (ch == '*' || ch == '/') {
-                        char op = (char) ch;
-                        next();
-                        double y = parseFactor();
-                        if (op == '*') x *= y;
-                        else x /= y;
-                    }
-                    return x;
-                }
-                double parseFactor() {
-                    if (ch == '(') {
-                        next();
-                        double x = parse();
-                        if (ch == ')') next();
-                        return x;
-                    }
-                    StringBuilder sb = new StringBuilder();
-                    while ((ch >= '0' && ch <= '9') || ch == '.') {
-                        sb.append((char)ch);
-                        next();
-                    }
-                    return Double.parseDouble(sb.toString());
-                }
-            }.parse();
+    // Simple expression evaluator without inner classes
+    private double evaluateExpression(String expr) {
+        return new Parser(expr).parse();
+    }
+
+    private static class Parser {
+        private final String expr;
+        private int pos;
+        private int ch;
+
+        Parser(String expr) {
+            this.expr = expr.replaceAll("\\s", "");
+            this.pos = -1;
+            next();
+        }
+
+        private void next() {
+            ch = (++pos < expr.length()) ? expr.charAt(pos) : -1;
+        }
+
+        private double parse() {
+            double x = parseTerm();
+            while (ch == '+' || ch == '-') {
+                char op = (char)ch;
+                next();
+                double y = parseTerm();
+                if (op == '+') x += y;
+                else x -= y;
+            }
+            return x;
+        }
+
+        private double parseTerm() {
+            double x = parseFactor();
+            while (ch == '*' || ch == '/') {
+                char op = (char)ch;
+                next();
+                double y = parseFactor();
+                if (op == '*') x *= y;
+                else x /= y;
+            }
+            return x;
+        }
+
+        private double parseFactor() {
+            if (ch == '(') {
+                next();
+                double x = parse();
+                if (ch == ')') next();
+                return x;
+            }
+            StringBuilder sb = new StringBuilder();
+            while ((ch >= '0' && ch <= '9') || ch == '.') {
+                sb.append((char)ch);
+                next();
+            }
+            return Double.parseDouble(sb.toString());
         }
     }
 }
